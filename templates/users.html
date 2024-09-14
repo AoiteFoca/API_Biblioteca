@@ -13,6 +13,15 @@
                     <p class="card-text">Id do usuario: {{ dado.id }}</p>
                     <p class="card-text">Email do usuario: {{ dado.email }}</p>
                     <p class="card-text">Senha do usuario: {{ dado.senha }}</p>
+                    <p class="card-text">Status da conta: 
+                        {% if dado.status == 1 %}
+                            Ativo
+                        {% else %}
+                            Bloqueado
+                        {% endif %}
+                    </p>
+                    <p class="card-text">Criacao do usuario: {{ dado.dataCriacao }}</p>
+                    <p class="card-text">Atualizacao do usuario: {{ dado.dataAtualizacao }}</p>
                 </div>
             </div>
         </div>
