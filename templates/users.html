@@ -1,0 +1,21 @@
+{% extends 'navbar.html' %}
+ 
+{% block content %}
+    <h1>{% block title %} Usuarios {% endblock %}</h1>
+ 
+    <div class="row">
+        {% for dado in dados %}
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3" style="max-width: 20rem;">
+                <div class="card-header">Usuario</div>
+                <div class="card-body">
+                    <h4 class="card-title">{{ dado.nomeCompleto }}</h4>
+                    <p class="card-text">Id do usuario: {{ dado.id }}</p>
+                    <p class="card-text">Email do usuario: {{ dado.email }}</p>
+                    <p class="card-text">Senha do usuario: {{ dado.senha }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}
