@@ -1,4 +1,6 @@
+from datetime import datetime
 import sqlite3
+import bcrypt
 from flask import Blueprint, jsonify, render_template, request
 import re
 from flask import Blueprint
@@ -24,15 +26,22 @@ def manage_users():
 def add_users():
     users_email = request.json.get('email')
     users_senha = request.json.get('senha')
-    users_nome = request.json.get('nomeCompleto')
+    users_nome = request.json.get('nome')
     
     if not users_email or not users_senha or not users_nome:
         return jsonify({"error": "As informacoes necessarias nao foram informadas"}), 400
+    
     try:
         db = get_db()
         cursor = db.cursor()
-        cursor.execute("INSERT INTO users (email, senha, nomeCompleto) VALUES (?, ?, ?)", (users_email, users_senha, users_nome))
+        cursor.execute("SELECT * FROM users WHERE email = ?", (users_email,))
+        existing_user = cursor.fetchone()
+        if existing_user:
+            return jsonify({"error": "Email ja cadastrado"}), 409
+        hashed_senha = bcrypt.hashpw(users_senha.encode('utf-8'), bcrypt.gensalt())
+        cursor.execute("INSERT INTO users (email, senha, nome) VALUES (?, ?, ?)", (users_email, hashed_senha, users_nome))
         db.commit()
+        
         return jsonify({"message": "Usuario adicionado com sucesso"}), 201
     except Exception as e:
         return jsonify({"error": "Erro ao adicionar usuario", "details": str(e)}), 500
@@ -77,18 +86,42 @@ def get_user(user_id):
 def update_user(user_id):
     email = request.json.get('email')
     senha = request.json.get('senha')
-    nomeCompleto = request.json.get("nome_completo")
+    nome = request.json.get('nome')
+    status = request.json.get('status')
+    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     if not email:
         return jsonify({'error': 'email e obrigatorio'})
     if not senha:
         return jsonify({'error': 'senha e obrigatoria'})
-    if not nomeCompleto:
+    if not nome:
         return jsonify({'error': 'nome_completo e obrigatorio'})
     if not validar_email(email):
         return jsonify({'error': 'email deve ser um e-mail valido'})
+    try:
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute('SELECT * FROM users WHERE id = ?', (user_id,))
+        id = cursor.fetchone()
+        if id:
+            cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
+            ver_email = cursor.fetchone()
+            if ver_email: 
+                return jsonify({'error': 'email ja existe'})
+            else:
+                hashed_senha = bcrypt.hashpw(senha.encode('utf-8'), bcrypt.gensalt())
+                cursor.execute('UPDATE users set email = ?, senha = ?, nome_completo = ?, status = ?, modified = ? WHERE id = ?', (email, hashed_senha, nome, status, now, user_id,))
+                db.commit()
+                return jsonify({'message': 'Dados alterados com sucesso!'}), 200
+        else:
+            return jsonify({'error': 'ID nao encontrado'})
+    except sqlite3.Error as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        db.close()
 
 def activate_user(user_id):
+    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     try:
         db = get_db()
         cursor = db.cursor()
@@ -104,30 +137,9 @@ def activate_user(user_id):
         return jsonify({'error': str(e)}), 500
     finally:
         db.close()
-    
-    try:
-        db = get_db()
-        cursor = db.cursor()
-        cursor.execute('SELECT * FROM users WHERE id = ?', (user_id,))
-        id = cursor.fetchone()
-        if id:
-            cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
-            ver_email = cursor.fetchone()
-            if ver_email: 
-                return jsonify({'error': 'email ja existe'})
-            else:
-                hashed_senha = bcrypt.hashpw(senha.encode('utf-8'), bcrypt.gensalt())
-                cursor.execute('UPDATE users set email = ?, senha = ?, nome_completo = ?, status = ?, modified = ? WHERE id = ?', (email, hashed_senha, nomeCompleto, status, now, user_id,))
-                db.commit()
-                return jsonify({'message': 'Dados alterados com sucesso!'}), 200
-        else:
-            return jsonify({'error': 'ID nao encontrado'})
-    except sqlite3.Error as e:
-        return jsonify({'error': str(e)}), 500
-    finally:
-        db.close()
 
 def delete_user(user_id):
+    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     try:
         db = get_db()
         cursor = db.cursor()

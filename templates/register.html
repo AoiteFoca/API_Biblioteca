@@ -27,10 +27,8 @@
                         <input name="login" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Digite seu e-mail">
                         <h4 class="form-label mt-4">Senha</h4>
                         <input name="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Digite sua senha" autocomplete="off">
-                        <h4 class="form-label mt-4">Nome</h4>
+                        <h4 class="form-label mt-4">Nome Completo</h4>
                         <input name="firstName" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="firstNameHelp" placeholder="Digite seu nome">
-                        <h4 class="form-label mt-4">Sobrenome</h4>
-                        <input name="lastName" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="lastNameHelp" placeholder="Digite seu sobrenome">
                     </div>
                     <div class="d-grid gap-2 form-label mt-4">
                         <button class="btn btn-primary" type="submit">Registrar</button>
@@ -41,5 +39,30 @@
             </div>
     </fieldset>
 </form>
+
+<script>
+    document.getElementById('registerForm').addEventListener('submit', async function(event) {
+        event.preventDefault(); // Evita o comportamento padrão de envio do formulário
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const name = document.getElementById('name').value;
+        // Envia os dados para o servidor usando fetch
+        const response = await fetch('/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email: email, password: password, name: name })
+        });
+        const result = await response.json();
+        if (response.ok) {
+            // Se login for bem-sucedido, redireciona para o dashboard ou outra página
+            window.location.href = '/dashboard'; 
+        } else {
+            // Exibe uma mensagem de erro se o login falhar
+            alert(result.message || 'Falha no login. Verifique suas credenciais.');
+        }
+    });
+</script>
 
 {% endblock %}
