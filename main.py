@@ -1,6 +1,6 @@
 from flask import render_template
-from flask import Flask, request, jsonify
-from db import init_db, close_db
+from flask import Flask
+from routes.db import init_db, close_db
 from routes.users import users_bp
 
 #-------------------------Inicio--------------------------#
@@ -29,7 +29,7 @@ def home():
 @app.route('/initdb')
 def initialize_db():
     init_db()
-    return "<marquee><h1 style=\"background-image: linear-gradient(to left, violet, indigo, blue, green, yellow, orange, red)\">Banco de dados inicializado com sucesso!</h1></marquee>"
+    return render_template('initdb.html')
 
 #-------------------------Register--------------------------#
 

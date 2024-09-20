@@ -1,6 +1,8 @@
+import sqlite3
 from flask import Blueprint, jsonify, render_template, request
 import re
-from db import get_db
+from flask import Blueprint
+from routes.db import get_db
 
 users_bp = Blueprint('users', __name__)
 
@@ -76,8 +78,6 @@ def update_user(user_id):
     email = request.json.get('email')
     senha = request.json.get('senha')
     nomeCompleto = request.json.get("nome_completo")
-    status = request.json.get("status")
-
 
     if not email:
         return jsonify({'error': 'email e obrigatorio'})
