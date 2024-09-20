@@ -1,8 +1,24 @@
 {% extends 'navbar.html' %}
- 
+
 {% block content %}
-    <h1>{% block title %} Usuarios {% endblock %}</h1>
- 
+
+<!-- Div exclusiva para o background -->
+<div style="
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-image: url('/static/assets/BibliotecaFundo.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -1;
+">
+</div>
+
+<!-- Conteúdo da página -->
+<div class="container" style="position: relative; z-index: 1;">
     <div class="row">
         {% for dado in dados %}
         <div class="col-md-4">
@@ -27,4 +43,6 @@
         </div>
         {% endfor %}
     </div>
+</div>
+
 {% endblock %}

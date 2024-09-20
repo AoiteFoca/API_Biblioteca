@@ -1,27 +1,74 @@
 {% extends 'navbar.html' %}
 
 {% block content %}
-    <form>
-        <fieldset>
-            <div class="d-flex align-items-center justify-content-center">
+
+<!-- Div exclusiva para o background -->
+<div style="
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-image: url('/static/assets/BibliotecaFundo.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -1;
+">
+</div>
+
+<!-- Conteúdo do formulário -->
+<form id="loginForm">
+    <fieldset>
+        <div class="d-flex align-items-center justify-content-center">
             <div class="card border-primary mb-3" style="max-width: 30rem; width: 25rem;">
                 <div class="card-header">{% block title %} Seja Bem-Vindo! {% endblock %}</div>
                 <div class="card-body">
                     <div>
                         <h4 for="exampleInputEmail1" class="form-label mt-4">Login</h4>
-                        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Digite seu e-mail">
+                        <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Digite seu e-mail" required>
                     </div>
                     <div>
                         <h4 for="exampleInputPassword1" class="form-label mt-4">Senha</h4>
-                        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Digite sua senha" autocomplete="off">
+                        <input type="password" class="form-control" id="password" placeholder="Digite sua senha" autocomplete="off" required>
                     </div>
                     <div class="d-grid gap-2 form-label mt-4">
                         <button class="btn btn-primary" type="submit">Login</button>
-                        <button onclick="window.location.href='/register';" class="btn btn-outline-secondary" type="button">Registrar</button></a>
+                        <button onclick="window.location.href='/register';" class="btn btn-outline-secondary" type="button">Não tem conta? Registre-se agora</button>
                     </div>
                 </div>
             </div>
-        </fieldset>
-    </form>
+        </div>
+    </fieldset>
+</form>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', async function(event) {
+        event.preventDefault(); // Evita o comportamento padrão de envio do formulário
+
+        // Obtém os valores do e-mail e senha inseridos
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        // Envia os dados para o servidor usando fetch
+        const response = await fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email: email, password: password })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            // Se login for bem-sucedido, redireciona para o dashboard ou outra página
+            window.location.href = '/dashboard'; 
+        } else {
+            // Exibe uma mensagem de erro se o login falhar
+            alert(result.message || 'Falha no login. Verifique suas credenciais.');
+        }
+    });
+</script>
 
 {% endblock %}

@@ -1,42 +1,39 @@
 {% extends 'navbar.html' %}
 
 {% block content %}
-        <h1 style="
-            background-image: linear-gradient(to left, violet, indigo, blue, green, yellow, orange, red);
-            background-clip: text;
-            color: transparent;
-            text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
-            font-size: 5em;
-            animation: textMove 5s linear infinite;
-        ">
-        </h1>
-    
-    <div style="
-        position: relative;
-        width: 100%;
-        height: 100vh; 
-        overflow: hidden; 
+
+<div style="
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-image: url('/static/assets/BibliotecaFundo.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -1;
+">
+</div>
+
+    <h1 style="
+        background-image: linear-gradient(to left, violet, indigo, blue, green, yellow, orange, red);
+        background-clip: text;
+        color: transparent;
+        text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+        font-size: 5em;
+        animation: textMove 5s linear infinite;
+        z-index: 1;
     ">
-        <img src="{{ url_for('static', filename='assets/BibliotecaFundo.png') }}" style="
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover; 
-        ">
-    </div>
+        Bem-vindo à Biblioteca do Nathan!
+    </h1>
 
-    <style>
-        @keyframes textMove {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0); }
-        }
+<style>
+    @keyframes textMove {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0); }
+    }
+</style>
 
-        @keyframes fadeIn {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
-        }
-    </style>
 {% endblock %}
