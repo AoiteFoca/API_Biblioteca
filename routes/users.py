@@ -30,6 +30,8 @@ def add_users():
     
     if not users_email or not users_senha or not users_nome:
         return jsonify({"error": "As informacoes necessarias nao foram informadas"}), 400
+    if not validar_email(users_email):
+        return jsonify({'error': 'email deve ser um e-mail valido'})
     
     try:
         db = get_db()
@@ -95,7 +97,7 @@ def update_user(user_id):
     if not senha:
         return jsonify({'error': 'senha e obrigatoria'})
     if not nome:
-        return jsonify({'error': 'nome_completo e obrigatorio'})
+        return jsonify({'error': 'nome e obrigatorio'})
     if not validar_email(email):
         return jsonify({'error': 'email deve ser um e-mail valido'})
     try:
@@ -110,7 +112,7 @@ def update_user(user_id):
                 return jsonify({'error': 'email ja existe'})
             else:
                 hashed_senha = bcrypt.hashpw(senha.encode('utf-8'), bcrypt.gensalt())
-                cursor.execute('UPDATE users set email = ?, senha = ?, nome_completo = ?, status = ?, modified = ? WHERE id = ?', (email, hashed_senha, nome, status, now, user_id,))
+                cursor.execute('UPDATE users set email = ?, senha = ?, nome = ?, status = ?, modified = ? WHERE id = ?', (email, hashed_senha, nome, status, now, user_id,))
                 db.commit()
                 return jsonify({'message': 'Dados alterados com sucesso!'}), 200
         else:
