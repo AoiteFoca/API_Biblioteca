@@ -1,7 +1,7 @@
 # API_Biblioteca
 
 ## Situação do Projeto
-![Status](https://img.shields.io/badge/status-Em%20Progresso-yellow)
+![Status](https://img.shields.io/badge/Status-Em%20Progresso-yellow)
 
 ![Etapa](https://img.shields.io/badge/Etapa-N1-Green)![Etapa](https://img.shields.io/badge/N2-000000)![Etapa](https://img.shields.io/badge/N3-000000)
 
@@ -33,8 +33,7 @@ criação deverá permanecer inalterada);
 - Lembre-se de que a “deleção” somente irá marcar o usuário como
 bloqueado.
 
-### Criar um template para a tela de login, para que o usuário acesse o sistema. Esta deve estar em um endpoint /login, e deve estar acessível na barra de menus
-superior do serviço:
+### Criar um template para a tela de login, para que o usuário acesse o sistema. Esta deve estar em um endpoint /login, e deve estar acessível na barra de menus superior do serviço:
 - Se o usuário estiver bloqueado, não deve ser permitido o login. Deve ser
 apresentada uma mensagem na tela informando o usuário do fato;
 - Se o usuário for autenticado com sucesso (login e senha OK), o usuário

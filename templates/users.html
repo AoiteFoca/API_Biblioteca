@@ -23,7 +23,14 @@
         {% for dado in dados %}
         <div class="col-md-4">
             <div class="card text-white bg-primary mb-3" style="max-width: 20rem;">
-                <div class="card-header">{{ dado.nome }}</div>
+                <div class="card-header">{{ dado.nome }}
+                    <span style="float: right;">
+                    <!-- Ícone de bloquear -->
+                    <i class="fas fa-ban" style="cursor: pointer;" onclick="toggleStatus('{{ dado.id }}', 'block', '{{ dado.status }}', '{{ dado.nome }}')"></i>
+                    <!-- Ícone de ativar -->
+                    <i class="fas fa-check-circle" style="cursor: pointer;" onclick="toggleStatus('{{ dado.id }}', 'activate', '{{ dado.status }}', '{{ dado.nome }}')"></i>
+                    </span>
+                </div>
                 <div class="card-body">
                     <h4 class="card-title">{{ dado.nomeCompleto }}</h4>
                     <p class="card-text">Id do usuario: {{ dado.id }}</p>
@@ -44,5 +51,52 @@
         {% endfor %}
     </div>
 </div>
+
+<script>
+    function toggleStatus(user_id, action, user_status, user_name) {
+        let url = '';
+        let method = '';
+        let message = '';
+
+        // Convertendo user_status para número
+        user_status = Number(user_status);
+
+        if (action === 'block') {
+            url = `/users/${user_id}`;
+            if (user_status === 0) {
+                alert(`O usuário ${user_name} já está bloqueado.`);
+                return;
+            } else {
+                method = 'DELETE';
+                message = `O usuário ${user_name} foi bloqueado com sucesso.`;
+            }
+        } else if (action === 'activate') {
+            url = `/users/${user_id}`;
+            if (user_status === 1) {
+                alert(`O usuário ${user_name} já está ativo.`);
+                return;
+            } else {
+                method = 'PATCH';
+                message = `O usuário ${user_name} foi ativado com sucesso.`;
+            }
+        }
+        // Executa a requisição
+        fetch(url, {
+            method: method,
+        })
+        .then(response => {
+            if (response.ok) {
+                alert(message);
+                location.reload(); // Atualiza a página para refletir a mudança no status
+            } else {
+                alert('Ocorreu um erro ao atualizar o status do usuário.');
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro ao conectar com o servidor.');
+        });
+    }
+</script>
 
 {% endblock %}
