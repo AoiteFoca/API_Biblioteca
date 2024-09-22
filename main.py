@@ -7,6 +7,7 @@ from routes.users import users_bp
 
 #Cria a instancia do Flask
 app = Flask(__name__,template_folder='templates')
+app.config['SECRET_KEY'] = 'chavesecreta'
  
 #----------------------Blueprints-----------------------#
 

@@ -1,9 +1,8 @@
 from datetime import datetime
 import sqlite3
 import bcrypt
-from flask import Blueprint, jsonify, render_template, request
+from flask import Blueprint, jsonify, render_template, request, url_for, redirect, flash
 import re
-from flask import Blueprint
 from routes.db import get_db
 
 users_bp = Blueprint('users', __name__)
@@ -14,7 +13,7 @@ def validar_email(email):
     regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     return re.match(regex, email) is not None
 
-#----------------Usuarios----------------#
+#-------------CRUD---Usuarios------------#
 
 @users_bp.route('/users', methods=['POST', 'GET'])
 def manage_users():
@@ -157,3 +156,80 @@ def delete_user(user_id):
         return jsonify({'error': str(e)}), 500
     finally:
         db.close()
+
+#--------------LogarUser--------------#
+
+@users_bp.route('/logins', methods=['POST'])
+def manage_login():
+    if request.method == 'POST':
+        return login()
+
+def login():
+    email = request.form['email']
+    senha = request.form['senha']
+    try:
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
+        user = cursor.fetchone()
+        if user is not None:
+            if user[4] == 0:
+                flash(f'Usuario bloqueado!', 'error')
+                return redirect(url_for('login'))
+            if bcrypt.checkpw(senha.encode('utf-8'), user[2]):
+                flash(f'Usuario logado!', 'success')
+                return redirect(url_for('home'))
+            else:
+                flash(f'Senha incorreta!', 'error')
+                return redirect(url_for('login'))
+        else:
+            flash(f'Usuario nao encontrado!', 'error')
+            return redirect(url_for('login'))
+    except sqlite3.Error as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        db.close()
+
+#--------------RegistrarUser--------------#
+
+@users_bp.route('/registers', methods=['POST'])
+def manage_register():
+    if request.method == 'POST':
+        return register()
+
+def register():
+    email = request.form['email']
+    senha = request.form['senha']
+    nome = request.form['nome']
+    if not email or not senha or not nome:
+        flash(f'Todos os campos sao obrigatorios!', 'error')
+        return redirect(url_for('register'))
+    if not validar_email(email):
+        flash(f'Email deve ser um e-mail valido!', 'error')
+        return redirect(url_for('register'))
+    try:
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
+        user = cursor.fetchone()
+        if user:
+            flash(f'Email ja cadastrado!', 'error')
+            return redirect(url_for('register'))
+        hashed_senha = bcrypt.hashpw(senha.encode('utf-8'), bcrypt.gensalt())
+        cursor.execute('INSERT INTO users (email, senha, nome) VALUES (?, ?, ?)', (email, hashed_senha, nome))
+        db.commit()
+        flash(f'Usuario {nome} cadastrado!', 'success')
+        return redirect(url_for('home'))
+    except sqlite3.Error as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        db.close()
+
+#--------------EditarUser--------------#
+
+@users_bp.route('/edit', methods=['POST'])
+def manage_editr():
+    if request.method == 'POST':
+        return edit()
+
+# def edit():

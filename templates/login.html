@@ -2,6 +2,17 @@
 
 {% block content %}
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-dismissible alert-danger">
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <strong>Erro!</strong> {{ message }}
+              </div>
+            {% endfor %}
+        {% endif %}
+{% endwith %}
+
 <div style="
     position: absolute;
     top: 0;
@@ -17,19 +28,19 @@
 </div>
 
 <!-- Conteúdo do formulário -->
-<form id="loginForm">
+<form action="/logins" method="POST">
     <fieldset>
         <div class="d-flex align-items-center justify-content-center">
             <div class="card border-primary mb-3" style="max-width: 30rem; width: 25rem;">
-                <div class="card-header">{% block title %} Entre em sua conta {% endblock %}</div>
+                <div class="card-header">{% block title %} <h2>Entre em sua conta</h2>{% endblock %}</div>
                 <div class="card-body">
                     <div>
                         <h4 for="exampleInputEmail1" class="form-label mt-4">Login</h4>
-                        <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Digite seu e-mail" required>
+                        <input name="email" type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Digite seu e-mail" required>
                     </div>
                     <div>
                         <h4 for="exampleInputPassword1" class="form-label mt-4">Senha</h4>
-                        <input type="password" class="form-control" id="password" placeholder="Digite sua senha" autocomplete="off" required>
+                        <input name="senha" type="password" class="form-control" id="password" placeholder="Digite sua senha" autocomplete="off" required>
                     </div>
                     <div class="d-grid gap-2 form-label mt-4">
                         <button class="btn btn-primary" type="submit">Login</button>
@@ -40,30 +51,5 @@
         </div>
     </fieldset>
 </form>
-
-<script>
-    document.getElementById('loginForm').addEventListener('submit', async function(event) {
-        event.preventDefault(); // Evita o comportamento padrão de envio do formulário
-        // Obtém os valores do e-mail e senha inseridos
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        // Envia os dados para o servidor usando fetch
-        const response = await fetch('/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email: email, password: password })
-        });
-        const result = await response.json();
-        if (response.ok) {
-            // Se login for bem-sucedido, redireciona para o dashboard ou outra página
-            window.location.href = '/dashboard'; 
-        } else {
-            // Exibe uma mensagem de erro se o login falhar
-            alert(result.message || 'Falha no login. Verifique suas credenciais.');
-        }
-    });
-</script>
 
 {% endblock %}

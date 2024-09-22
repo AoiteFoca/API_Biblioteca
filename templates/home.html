@@ -2,6 +2,17 @@
 
 {% block content %}
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-dismissible alert-success">
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <strong>Sucesso!</strong> {{ message }}
+              </div>
+            {% endfor %}
+        {% endif %}
+{% endwith %}
+
 <div style="
     position: absolute;
     top: 0;
