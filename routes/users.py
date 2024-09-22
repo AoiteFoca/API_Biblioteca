@@ -225,11 +225,39 @@ def register():
     finally:
         db.close()
 
-#--------------EditarUser--------------#
-
-@users_bp.route('/edit', methods=['POST'])
-def manage_editr():
+@users_bp.route('/users/<int:id>/edit', methods=['GET', 'POST'])
+def edit_user(id):
+    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     if request.method == 'POST':
-        return edit()
-
-# def edit():
+        nome = request.form['nome']
+        senha = request.form['senha']
+        if not nome or not senha:
+            flash('Preencha todos os campos!', 'error')
+            return redirect(url_for('users.edit_user', id=id))
+        try:
+            db = get_db()
+            cursor = db.cursor()
+            # Verifica se o usuário existe
+            cursor.execute('SELECT * FROM users WHERE id = ?', (id,))
+            user = cursor.fetchone()
+            if user is None:
+                flash('Usuário não encontrado!', 'error')
+                return redirect(url_for('users'))
+            hashed_senha = bcrypt.hashpw(senha.encode('utf-8'), bcrypt.gensalt())
+            cursor.execute('UPDATE users SET nome = ?, senha = ?, modified = ? WHERE id = ?', (nome, hashed_senha, now, id))
+            db.commit()
+            flash('Usuário atualizado', 'success')
+            return redirect(url_for('home'))
+        except sqlite3.Error as e:
+            return jsonify({'error': str(e)}), 500
+        finally:
+            db.close()
+    else:
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute('SELECT * FROM users WHERE id = ?', (id,))
+        user = cursor.fetchone()
+        if user is None:
+            flash('Usuário não encontrado!', 'error')
+            return redirect(url_for('users'))
+        return render_template('edit.html', dados=user)

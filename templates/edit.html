@@ -2,4 +2,45 @@
 
 {% block content %}
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-dismissible alert-{{ category }}">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <strong>{{ 'Sucesso!' if category == 'success' else 'Erro!' }}</strong> {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<div style="
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-image: url('/static/assets/BibliotecaFundo.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -1;
+">
+</div>
+
+<!-- Conteúdo do formulário -->
+<form action="/users/{{ dados.id }}/edit" method="post">
+    <input type="hidden" name="_method" value="PUT">
+    <div style="margin: 3% 25% 25% 25%; padding: 2rem;" class="card border-primary mb-3">
+        <h4 class="form-label mt-4">Nome Completo</h4>
+        <input name="nome" type="text" class="form-control" value="{{ dados.nome }}" placeholder="Digite seu nome" required>
+        <h3 class="form-label mt-4">Senha</h3>
+        <input name="senha" type="password" class="form-control" placeholder="Digite sua senha" autocomplete="new-password" required>
+        
+        <div class="d-grid gap-2 form-label mt-4">
+            <button class="btn btn-primary" type="submit">Atualizar Dados</button>
+            <button onclick="window.location.href='/users';" class="btn btn-outline-secondary" type="button">Voltar</button>
+        </div>
+    </div>
+</form>
+
 {% endblock %}
