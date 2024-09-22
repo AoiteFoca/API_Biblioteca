@@ -1,0 +1,10 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "XUMBAS",
+            "database": "${workspaceFolder:API_Biblioteca}/database.db"
+        }
+    ]
+}

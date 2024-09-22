@@ -1,0 +1,103 @@
+{% extends 'navbar.html' %}
+
+{% block content %}
+
+<!-- Div exclusiva para o background -->
+<div style="
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-image: url('/static/assets/BibliotecaFundo.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -1;
+">
+</div>
+
+<!-- Conteúdo da página -->
+<div class="container" style="position: relative; z-index: 1;">
+    <div class="row">
+        {% for dado in dados %}
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3" style="max-width: 20rem;">
+                <div class="card-header">{{ dado.nome }}
+                    <span style="float: right;">
+                    <!-- Ícone de editar -->
+                    <i class="fas fa-edit" style="cursor: pointer;" onclick="window.location.href='/users/{{ dado.id }}/edit'"></i>
+                    <!-- Ícone de bloquear -->
+                    <i class="fas fa-ban" style="cursor: pointer;" onclick="toggleStatus('{{ dado.id }}', 'block', '{{ dado.status }}', '{{ dado.nome }}')"></i>
+                    <!-- Ícone de ativar -->
+                    <i class="fas fa-check-circle" style="cursor: pointer;" onclick="toggleStatus('{{ dado.id }}', 'activate', '{{ dado.status }}', '{{ dado.nome }}')"></i>
+                    </span>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">{{ dado.nomeCompleto }}</h4>
+                    <p class="card-text">Id do usuário: {{ dado.id }}</p>
+                    <p class="card-text">Email: {{ dado.email }}</p>
+                    <p class="card-text">Senha: {{ dado.senha }}</p>
+                    <p class="card-text">Status da conta: 
+                        {% if dado.status == 1 %}
+                            Ativo
+                        {% else %}
+                            Bloqueado
+                        {% endif %}
+                    </p>
+                    <p class="card-text">Criação do usuário: {{ dado.created }}</p>
+                    <p class="card-text">Atualização do usuário: {{ dado.modified }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    function toggleStatus(user_id, action, user_status, user_name) {
+        let url = '';
+        let method = '';
+        let message = '';
+
+        user_status = Number(user_status);
+
+        if (action === 'block') {
+            url = `/users/${user_id}`;
+            if (user_status === 0) {
+                alert(`O usuário ${user_name} já está bloqueado.`);
+                return;
+            } else {
+                method = 'DELETE';
+                message = `O usuário ${user_name} foi bloqueado com sucesso.`;
+            }
+        } else if (action === 'activate') {
+            url = `/users/${user_id}`;
+            if (user_status === 1) {
+                alert(`O usuário ${user_name} já está ativo.`);
+                return;
+            } else {
+                method = 'PATCH';
+                message = `O usuário ${user_name} foi ativado com sucesso.`;
+            }
+        }
+        // Executa a requisição
+        fetch(url, {
+            method: method,
+        })
+        .then(response => {
+            if (response.ok) {
+                alert(message);
+                location.reload(); // Atualiza a página 
+            } else {
+                alert('Ocorreu um erro ao atualizar o status do usuário.');
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro ao conectar com o servidor.');
+        });
+    }
+</script>
+
+{% endblock %}

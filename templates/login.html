@@ -1,1 +1,55 @@
 {% extends 'navbar.html' %}
+
+{% block content %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-dismissible alert-danger">
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <strong>Erro!</strong> {{ message }}
+              </div>
+            {% endfor %}
+        {% endif %}
+{% endwith %}
+
+<div style="
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-image: url('/static/assets/BibliotecaFundo.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -1;
+">
+</div>
+
+<!-- Conteúdo do formulário -->
+<form action="/logins" method="POST">
+    <fieldset>
+        <div class="d-flex align-items-center justify-content-center">
+            <div class="card border-primary mb-3" style="max-width: 30rem; width: 25rem;">
+                <div class="card-header">{% block title %} <h2>Entre em sua conta</h2>{% endblock %}</div>
+                <div class="card-body">
+                    <div>
+                        <h4 for="exampleInputEmail1" class="form-label mt-4">Login</h4>
+                        <input name="email" type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Digite seu e-mail" required>
+                    </div>
+                    <div>
+                        <h4 for="exampleInputPassword1" class="form-label mt-4">Senha</h4>
+                        <input name="senha" type="password" class="form-control" id="password" placeholder="Digite sua senha" autocomplete="off" required>
+                    </div>
+                    <div class="d-grid gap-2 form-label mt-4">
+                        <button class="btn btn-primary" type="submit">Login</button>
+                        <button onclick="window.location.href='/register';" class="btn btn-outline-secondary" type="button">Não tem conta? Registre-se agora</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</form>
+
+{% endblock %}
