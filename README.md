@@ -43,7 +43,7 @@ não protegeremos rotas neste ponto do trabalho;
 
 ## Guia de Instalação:
 1. Baixe o conteúdo da versão mais recente deste repositório;
-2. Instale a IDE desejada (estou utilizando o [VSCODE](https://code.visualstudio.com/)). Está sendo considerado que você possui [SQLite](https://www.sqlite.org/download.html) e [Python](https://www.python.org/downloads/) instalados em sua máquina, caso não tenha, basta clicar nos links deste guia que você será redirecionado para a página de download;
+2. Instale a IDE desejada (estou utilizando o [VSCODE](https://code.visualstudio.com/)). Está sendo considerado que você possui [SQLite](https://www.sqlite.org/download.html), [Python](https://www.python.org/downloads/) e [PIP](https://pypi.org/project/pip/) instalados em sua máquina, caso não tenha, basta clicar nos links deste guia que você será redirecionado para a página de download;
 3. Agora que você baixou este repositório, dentro do VSCODE, abra a pasta do projeto;
 4. Abra um terminal (o atalho é `Ctrl+Shift+'`) e instale os seguintes módulos:
 - `pip install flask`
