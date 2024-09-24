@@ -51,7 +51,7 @@ não protegeremos rotas neste ponto do trabalho;
 - `pip install bcrypt`
 5. Após isso você terá todos os componentes necessários para rodar o projeto. Para isso, vá ao arquivo **main.py** e clique na opção **"Run Code"** ou utilize o atalho `Ctrl+Alt+N`;
 6. Agora você terá uma saída no "OUTPUT" em que poderá clicar e ser direcionado para a aplicação Web;
-7. Como o **database.db** está sendo ignorado pelo `.gitignore`, será necessário que você, ao abrir o projeto no navegador, vá para a rota `/initdb` e então seu banco será criado.
+7. Como o **database.db** está sendo ignorado pelo `.gitignore`, será necessário que você, ao acessar o projeto pelo navegador, vá para a rota `/initdb` e então seu banco será criado.
 
 Pronto! Agora você poderá registrar, logar, editar dados e status da conta dos usuários.
 
