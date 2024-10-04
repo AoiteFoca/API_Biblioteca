@@ -3,9 +3,9 @@
 ## Situação do Projeto
 ![Status](https://img.shields.io/badge/Status-Em%20Progresso-yellow)
 
-![Etapa](https://img.shields.io/badge/Etapa-N1-Green)![Etapa](https://img.shields.io/badge/N2-000000)![Etapa](https://img.shields.io/badge/N3-000000)
+![Etapa](https://img.shields.io/badge/Etapa-N1-000000)![Etapa](https://img.shields.io/badge/N2-Green)![Etapa](https://img.shields.io/badge/N3-000000)
 
-## Instruções da Avaliação:
+## Instruções da Avaliação N1:
 ### Você deverá implementar:
 ### Tabela no banco de dados (o initdb deverá criar a tabela de usuários):
 - A tabela de usuários deverá ter os seguintes campos: id, login (deverá ser
