@@ -15,7 +15,7 @@ load_dotenv()
 
 # Cria a instância do Flask
 app = Flask(__name__, template_folder='templates')
-app.config['SECRET_KEY'] = 'chavesecreta'
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 
 # Obtém o valor das variáveis do arquivo .env
 client_id_google = os.getenv("CLIENT_ID_GOOGLE")
