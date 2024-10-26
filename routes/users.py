@@ -261,3 +261,5 @@ def edit_user(id):
             flash('Usuário não encontrado!', 'error')
             return redirect(url_for('users'))
         return render_template('edit.html', dados=user)
+
+#---------------Password---------------#
