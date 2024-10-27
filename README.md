@@ -3,9 +3,9 @@
 ## Situação do Projeto
 ![Status](https://img.shields.io/badge/Status-Em%20Progresso-yellow)
 
-![Etapa](https://img.shields.io/badge/Etapa-N1-Green)![Etapa](https://img.shields.io/badge/N2-000000)![Etapa](https://img.shields.io/badge/N3-000000)
+![Etapa](https://img.shields.io/badge/Etapa-N1-000000)![Etapa](https://img.shields.io/badge/N2-Green)![Etapa](https://img.shields.io/badge/N3-000000)
 
-## Instruções da Avaliação:
+## Instruções da Avaliação N1:
 ### Você deverá implementar:
 ### Tabela no banco de dados (o initdb deverá criar a tabela de usuários):
 - A tabela de usuários deverá ter os seguintes campos: id, login (deverá ser
@@ -49,6 +49,10 @@ não protegeremos rotas neste ponto do trabalho;
 - `pip install flask`
 - `pip install pysqlite3` 
 - `pip install bcrypt`
+- `pip install Flask-Dance`
+- `pip install python-dotenv`
+- `pip install Flask-Mail`
+
 5. Após isso você terá todos os componentes necessários para rodar o projeto. Para isso, vá ao arquivo **main.py** e clique na opção **"Run Code"** ou utilize o atalho `Ctrl+Alt+N`;
 6. Agora você terá uma saída no "OUTPUT" em que poderá clicar e ser direcionado para a aplicação Web;
 7. Como o **database.db** está sendo ignorado pelo `.gitignore`, será necessário que você, ao acessar o projeto pelo navegador, vá para a rota `/initdb` e então seu banco será criado.
