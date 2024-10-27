@@ -67,7 +67,7 @@ app.teardown_appcontext(close_db)
 
 @app.route('/')
 def home(): 
-    return render_template('home.html', google_data=google_data, github_data=github_data)
+    return render_template('home.html')
 
 #-------------------------InitDB--------------------------#
 
