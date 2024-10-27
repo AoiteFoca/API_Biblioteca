@@ -67,15 +67,6 @@ app.teardown_appcontext(close_db)
 
 @app.route('/')
 def home(): 
-    google_data = None
-    github_data = None
-    user_info_endpoint = '/oauth2/v2/userinfo'
-
-    if google.authorized:
-        google_data = google.get(user_info_endpoint).json()
-    if github.authorized:
-        github_data = github.get("/user").json()
-
     return render_template('home.html', google_data=google_data, github_data=github_data)
 
 #-------------------------InitDB--------------------------#
@@ -107,8 +98,15 @@ def login():
 
 @app.route('/perfil')
 def perfil(): 
-    user_data = session.get('user')
-    return render_template('perfil.html', google_data=user_data)
+    google_data = None
+    github_data = None
+    user_info_endpoint = '/oauth2/v2/userinfo'
+
+    if google.authorized:
+        google_data = google.get(user_info_endpoint).json()
+    if github.authorized:
+        github_data = github.get("/user").json()
+    return render_template('perfil.html', google_data=google_data, github_data=github_data, fetch_url=google.base_url + user_info_endpoint)
 
 #-------------------------Recuperação de Senha--------------------------#
 
