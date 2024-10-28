@@ -27,7 +27,7 @@ a data atual;
 - Ao efetuar qualquer alteração no usuário, a data da última atualização
 deverá ser preenchida com a data da alteração do registro (a data de
 criação deverá permanecer inalterada);
-- Usuários NÃO poderão ser excluídos, somente bloqueados;
+- Usuários NÃO poderão ser excluídos, somente bloqueados.
 
 ### Criar template para gerenciamento do usuário (as operações do CRUD acima deverão ser feitas por interface gráfica):
 - Lembre-se de que a “deleção” somente irá marcar o usuário como
@@ -39,7 +39,17 @@ apresentada uma mensagem na tela informando o usuário do fato;
 - Se o usuário for autenticado com sucesso (login e senha OK), o usuário
 deve ser redirecionado à uma página inicial (à sua escolha);
 - Por enquanto, os demais endpoints poderão ser acessados diretamente,
-não protegeremos rotas neste ponto do trabalho;
+não protegeremos rotas neste ponto do trabalho.
+
+## Instruções da Avaliação N2:
+### OAuth:
+- Deverá ser possível conectar sua conta Google e Github na página de login;
+- As informações deverão ser exibidas em alguma rota (neste caso em _/perfil_) para validar a sessão feita via Google e/ou Github.
+
+### Recuperar Senha:
+- Deverá ser criada uma funcionalidade para recuperar a senha de uma conta;
+- Caso não exista login no banco com o email solicitado para recuperar a senha, uma mensagem de retorno deverá ser exibida para o usuário;
+- O campo modified deverá ser atualizado juntamente da senha.
 
 ## Guia de Instalação:
 1. Baixe o conteúdo da versão mais recente deste repositório;
