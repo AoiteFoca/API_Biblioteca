@@ -44,7 +44,7 @@ não protegeremos rotas neste ponto do trabalho.
 ## Instruções da Avaliação N2:
 ### OAuth:
 - Deverá ser possível conectar sua conta Google e Github na página de login;
-- As informações deverão ser exibidas em alguma rota (neste caso em _/perfil_) para validar a sessão feita via Google e/ou Github.
+- As informações deverão ser exibidas em alguma rota ***(neste caso em _/perfil_)*** para validar a sessão feita via Google e/ou Github.
 
 ### Recuperar Senha:
 - Deverá ser criada uma funcionalidade para recuperar a senha de uma conta;
