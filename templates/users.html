@@ -21,6 +21,7 @@
 <div class="container" style="position: relative; z-index: 1;">
     <div class="row">
         {% for dado in dados %}
+
         <div class="col-md-4">
             <div class="card text-white bg-primary mb-3" style="max-width: 20rem;">
                 <div class="card-header">{{ dado.nome }}
@@ -43,6 +44,13 @@
                             Ativo
                         {% else %}
                             Bloqueado
+                        {% endif %}
+                    </p>
+                    <p class="card-text">Tipo de usuário: 
+                        {% if dado.is_admin == 1 %}
+                            Admin
+                        {% else %}
+                            Usuário Padrão
                         {% endif %}
                     </p>
                     <p class="card-text">Criação do usuário: {{ dado.created }}</p>

@@ -4,7 +4,7 @@
             "previewLimit": 50,
             "driver": "SQLite",
             "name": "XUMBAS",
-            "database": "${workspaceFolder:API_Biblioteca}/database.db"
+            "database": "${workspaceFolder:API_Biblioteca2}/database.db"
         }
     ]
 }

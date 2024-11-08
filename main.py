@@ -94,6 +94,18 @@ def login():
     else:
         return render_template('login.html')
 
+#-------------------------Admin--------------------------#
+
+@app.route('/admin')
+def admin():
+    if not is_admin():
+        return "Você não possui permissão de administrador. Feche a página agora mesmo ou sofra as consequencias...", 403
+    return render_template('admin.html')
+
+def is_admin():
+    user = session.get('user')
+    return user and user.get("is_admin", 0)
+
 #-------------------------Perfil--------------------------#
 
 @app.route('/perfil')

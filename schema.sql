@@ -1,9 +1,10 @@
 CREATE TABLE IF NOT EXISTS users(
-    id INTEGER PRIMARY KEY autoincrement,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     email VARCHAR(100) NOT NULL,
     senha VARCHAR(50) NOT NULL,
     nome VARCHAR(100) NOT NULL,
     status BOOLEAN DEFAULT TRUE,
+    is_admin INTEGER DEFAULT 0, -- 0 para usuário normal, 1 para admin
     created TIMESTAMP DEFAULT (DATETIME(CURRENT_TIMESTAMP, '-3 hours')),
     modified TIMESTAMP DEFAULT (DATETIME(CURRENT_TIMESTAMP, '-3 hours'))
 );

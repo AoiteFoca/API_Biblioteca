@@ -26,6 +26,7 @@ def add_users():
     users_email = request.json.get('email')
     users_senha = request.json.get('senha')
     users_nome = request.json.get('nome')
+    users_is_admin = request.json.get('is_admin')
     
     if not users_email or not users_senha or not users_nome:
         return jsonify({"error": "As informacoes necessarias nao foram informadas"}), 400
@@ -40,7 +41,7 @@ def add_users():
         if existing_user:
             return jsonify({"error": "Email ja cadastrado"}), 409
         hashed_senha = bcrypt.hashpw(users_senha.encode('utf-8'), bcrypt.gensalt())
-        cursor.execute("INSERT INTO users (email, senha, nome) VALUES (?, ?, ?)", (users_email, hashed_senha, users_nome))
+        cursor.execute("INSERT INTO users (email, senha, nome, is_admin) VALUES (?, ?, ?, ?)", (users_email, hashed_senha, users_nome, users_is_admin))
         db.commit()
         
         return jsonify({"message": "Usuario adicionado com sucesso"}), 201
