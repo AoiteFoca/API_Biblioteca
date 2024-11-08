@@ -3,7 +3,7 @@
 ## Situação do Projeto
 ![Status](https://img.shields.io/badge/Status-Em%20Progresso-yellow)
 
-![Etapa](https://img.shields.io/badge/Etapa-N1-000000)![Etapa](https://img.shields.io/badge/N2-Green)![Etapa](https://img.shields.io/badge/N3-000000)
+![Etapa](https://img.shields.io/badge/Etapa-N1-000000)![Etapa](https://img.shields.io/badge/N2-000000)![Etapa](https://img.shields.io/badge/N3-Green)
 
 ## Instruções da Avaliação N1:
 ### Você deverá implementar:
@@ -50,6 +50,18 @@ não protegeremos rotas neste ponto do trabalho.
 - Deverá ser criada uma funcionalidade para recuperar a senha de uma conta;
 - Caso não exista login no banco com o email solicitado para recuperar a senha, uma mensagem de retorno deverá ser exibida para o usuário;
 - O campo modified deverá ser atualizado juntamente da senha.
+
+## Instruções da Avaliação N3:
+### Troca de Idioma:
+- Deverá ser utilizada a biblioteca `Babel` para configuração de idiomas;
+- Pelo menos três idiomas (Português, Inglês e Espanhol) devem estar aplicados ao site;
+
+### Paginação:
+- A página de clientes deverá limitar um número de exibições em tela (10, por exemplo) e, caso existam mais usuários, eles deverão ser exibidos na página 2 de clientes.
+
+### Permissão de usuários:
+- Deverá existir uma página de admin que apenas o usuário com role admin conseguirá acessar;
+- A verificação de permissão deverá ser feita através de atributos do banco, e não características do usuário (nome e idade, por exemplo).
 
 ## Guia de Instalação:
 1. Baixe o conteúdo da versão mais recente deste repositório;
