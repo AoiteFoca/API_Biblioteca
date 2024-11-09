@@ -106,6 +106,14 @@ def is_admin():
     user = session.get('user')
     return user and user.get("is_admin", 0)
 
+#-------------------------Logout--------------------------#
+
+@app.route('/logout')
+def logout():
+    session.pop('user', None)  # Remove o usuário da sessão
+    flash('Você foi deslogado com sucesso!', 'success')
+    return redirect(url_for('login'))  # Redireciona para a página de login
+
 #-------------------------Perfil--------------------------#
 
 @app.route('/perfil')

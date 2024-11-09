@@ -1,7 +1,7 @@
 from datetime import datetime
 import sqlite3
 import bcrypt
-from flask import Blueprint, jsonify, render_template, request, url_for, redirect, flash
+from flask import Blueprint, jsonify, render_template, request, url_for, redirect, flash, session
 import re
 from routes.db import get_db
 
@@ -174,17 +174,24 @@ def login():
         cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
         user = cursor.fetchone()
         if user is not None:
-            if user[4] == 0:
-                flash(f'Usuario bloqueado!', 'error')
+            if user[4] == 0:  # status do usuário
+                flash(f'Usuário bloqueado!', 'error')
                 return redirect(url_for('login'))
-            if bcrypt.checkpw(senha.encode('utf-8'), user[2]):
-                flash(f'Usuario logado!', 'success')
+            if bcrypt.checkpw(senha.encode('utf-8'), user[2]):  # senha correta
+                flash(f'Usuário logado!', 'success')
+                # Armazenando informações do usuário na sessão
+                session['user'] = {
+                    'id': user[0],  # ID do usuário
+                    'email': user[1],  # Email do usuário
+                    'is_admin': user[4],  # Verifica se é admin
+                    'nome': user[5]  # Nome do usuário (ajuste conforme sua tabela)
+                }
                 return redirect(url_for('home'))
             else:
                 flash(f'Senha incorreta!', 'error')
                 return redirect(url_for('login'))
         else:
-            flash(f'Usuario nao encontrado!', 'error')
+            flash(f'Usuário não encontrado!', 'error')
             return redirect(url_for('login'))
     except sqlite3.Error as e:
         return jsonify({'error': str(e)}), 500
