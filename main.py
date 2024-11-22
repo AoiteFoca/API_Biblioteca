@@ -99,7 +99,15 @@ def login():
 @app.route('/admin')
 def admin():
     if not is_admin():
-        return "Você não possui permissão de administrador. Feche a página agora mesmo ou sofra as consequencias...", 403
+        return """
+        <h1>Você não possui permissão de administrador.</h1>
+        <p>Feche a página agora mesmo ou sofra as consequências...</p>
+        <a href="/" style="text-decoration: none;">
+            <button style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                Voltar para a página inicial
+            </button>
+        </a>
+        """, 403
     return render_template('admin.html')
 
 def is_admin():
