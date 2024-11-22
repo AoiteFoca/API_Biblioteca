@@ -26,12 +26,19 @@
             <div class="card text-white bg-primary mb-3" style="max-width: 20rem;">
                 <div class="card-header">{{ dado.nome }}
                     <span style="float: right;">
-                    <!-- Ícone de editar -->
-                    <i class="fas fa-edit" style="cursor: pointer;" onclick="window.location.href='/users/{{ dado.id }}/edit'"></i>
-                    <!-- Ícone de bloquear -->
-                    <i class="fas fa-ban" style="cursor: pointer;" onclick="toggleStatus('{{ dado.id }}', 'block', '{{ dado.status }}', '{{ dado.nome }}')"></i>
-                    <!-- Ícone de ativar -->
-                    <i class="fas fa-check-circle" style="cursor: pointer;" onclick="toggleStatus('{{ dado.id }}', 'activate', '{{ dado.status }}', '{{ dado.nome }}')"></i>
+                        <!-- Ícone de editar -->
+                        <i class="fas fa-edit" style="cursor: pointer;"
+                            onclick="window.location.href='/users/{{ dado.id }}/edit'"></i>
+                        <!-- Ícone de bloquear -->
+                        <i class="fas fa-ban" style="cursor: pointer;"
+                            onclick="toggleStatus('{{ dado.id }}', 'block', '{{ dado.status }}', '{{ dado.nome }}')"></i>
+                        <!-- Ícone de ativar -->
+                        <i class="fas fa-check-circle" style="cursor: pointer;"
+                            onclick="toggleStatus('{{ dado.id }}', 'activate', '{{ dado.status }}', '{{ dado.nome }}')"></i>
+                        <!-- Ícone de administrador -->
+                        <i class="fas fa-shield-alt" style="cursor: pointer;"
+                            onclick="toggleAdmin('{{ dado.id }}', '{{ dado.is_admin }}', '{{ dado.nome }}')">
+                        </i>
                     </span>
                 </div>
                 <div class="card-body">
@@ -39,18 +46,18 @@
                     <p class="card-text">Id do usuário: {{ dado.id }}</p>
                     <p class="card-text">Email: {{ dado.email }}</p>
                     <p class="card-text">Senha: {{ dado.senha }}</p>
-                    <p class="card-text">Status da conta: 
+                    <p class="card-text">Status da conta:
                         {% if dado.status == 1 %}
-                            Ativo
+                        Ativo
                         {% else %}
-                            Bloqueado
+                        Bloqueado
                         {% endif %}
                     </p>
-                    <p class="card-text">Tipo de usuário: 
+                    <p class="card-text">Tipo de usuário:
                         {% if dado.is_admin == 1 %}
-                            Admin
+                        Admin
                         {% else %}
-                            Usuário Padrão
+                        Usuário Padrão
                         {% endif %}
                     </p>
                     <p class="card-text">Criação do usuário: {{ dado.created }}</p>
@@ -93,19 +100,46 @@
         fetch(url, {
             method: method,
         })
-        .then(response => {
-            if (response.ok) {
-                alert(message);
-                location.reload(); // Atualiza a página 
+            .then(response => {
+                if (response.ok) {
+                    alert(message);
+                    location.reload(); // Atualiza a página 
+                } else {
+                    alert('Ocorreu um erro ao atualizar o status do usuário.');
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao conectar com o servidor.');
+            });
+    }
+
+    function toggleAdmin(user_id, is_admin, user_name) {
+    const url = `/users/${user_id}/admin`;
+    const method = is_admin == 1 ? 'DELETE' : 'PATCH';
+    const confirmationMessage = is_admin == 1
+        ? `Deseja realmente remover o status de administrador de ${user_name}?`
+        : `Deseja promover ${user_name} a administrador?`;
+
+    if (!confirm(confirmationMessage)) return;
+
+    fetch(url, { method: method })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
             } else {
-                alert('Ocorreu um erro ao atualizar o status do usuário.');
+                alert(data.message);
+                location.reload(); // Atualiza a página
             }
         })
         .catch(error => {
             console.error('Erro:', error);
             alert('Erro ao conectar com o servidor.');
         });
-    }
+}
+
 </script>
+
 
 {% endblock %}

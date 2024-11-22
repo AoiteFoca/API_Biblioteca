@@ -158,6 +158,48 @@ def delete_user(user_id):
     finally:
         db.close()
 
+#------------Administrador------------#
+
+@users_bp.route('/users/<int:user_id>/admin', methods=['PATCH', 'DELETE'])
+def toggle_admin(user_id):
+    """
+    Promove um usuário a administrador ou remove o status de administrador.
+    PATCH: Torna o usuário um administrador.
+    DELETE: Remove o status de administrador do usuário.
+    """
+    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    try:
+        db = get_db()
+        cursor = db.cursor()
+
+        # Buscar o usuário pelo ID
+        cursor.execute('SELECT * FROM users WHERE id = ?', (user_id,))
+        user = cursor.fetchone()
+
+        if not user:
+            return jsonify({'error': 'ID do usuário não encontrado'}), 404
+
+        # Verificar o método da requisição
+        if request.method == 'PATCH':  # Promover a administrador
+            if user['is_admin'] == 1:
+                return jsonify({'error': f'O usuário {user["nome"]} já é administrador.'}), 400
+            cursor.execute('UPDATE users SET is_admin = 1, modified = ? WHERE id = ?', (now, user_id))
+            db.commit()
+            return jsonify({'message': f'O usuário {user["nome"]} agora é administrador.'}), 200
+
+        elif request.method == 'DELETE':  # Remover status de administrador
+            if user['is_admin'] == 0:
+                return jsonify({'error': f'O usuário {user["nome"]} já é um usuário padrão.'}), 400
+            cursor.execute('UPDATE users SET is_admin = 0, modified = ? WHERE id = ?', (now, user_id))
+            db.commit()
+            return jsonify({'message': f'O status de administrador foi removido do usuário {user["nome"]}.'}), 200
+
+    except sqlite3.Error as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        db.close()
+
 #--------------LogarUser--------------#
 
 @users_bp.route('/logins', methods=['POST'])
