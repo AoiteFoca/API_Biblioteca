@@ -49,17 +49,34 @@ def add_users():
         return jsonify({"error": "Erro ao adicionar usuario", "details": str(e)}), 500
 
 def get_users():
+    page = request.args.get('page', 1, type=int)
+    per_page = 3  # Número de registros por página
+    offset = (page - 1) * per_page
     try:
         db = get_db()
         cursor = db.cursor()
-        cursor.execute("SELECT * FROM users")
+
+        # Contar o total de registros
+        cursor.execute("SELECT COUNT(*) AS total FROM users")
+        total_records = cursor.fetchone()['total']
+        # Buscar registros da página atual
+        cursor.execute("SELECT * FROM users LIMIT ? OFFSET ?", (per_page, offset))
         users = cursor.fetchall()
-        return render_template('users.html', dados=users)
+        # Calcular o número total de páginas
+        total_pages = (total_records + per_page - 1) // per_page
+        # Passar os dados para o template
+        return render_template(
+            "users.html", 
+            dados=users,  # Corrigido para "dados"
+            page=page, 
+            total_pages=total_pages
+        )
     except Exception as e:
         return jsonify({"error": "Erro ao buscar usuario", "details": str(e)}), 500
+    finally:
+        db.close()
 
 @users_bp.route('/users/<int:user_id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
-
 def handle_usuario (user_id):
     if request.method == 'GET':
         return get_user(user_id)
@@ -311,5 +328,3 @@ def edit_user(id):
             flash('Usuário não encontrado!', 'error')
             return redirect(url_for('users'))
         return render_template('edit.html', dados=user)
-
-#---------------Password---------------#

@@ -69,6 +69,21 @@
     </div>
 </div>
 
+<div class="pagination-container">
+    <!-- Botão para a página anterior -->
+    {% if page > 1 %}
+        <a href="{{ url_for('users.manage_users', page=page-1) }}" class="btn btn-primary">Anterior</a>
+    {% endif %}
+
+    <!-- Exibe o número da página atual -->
+    <span class="page-info">Pagina {{ page }} de {{ total_pages }}</span>
+
+    <!-- Botão para a próxima página -->
+    {% if page < total_pages %}
+        <a href="{{ url_for('users.manage_users', page=page+1) }}" class="btn btn-primary">Proximo</a>
+    {% endif %}
+</div>
+
 <script>
     function toggleStatus(user_id, action, user_status, user_name) {
         let url = '';
@@ -140,6 +155,5 @@
 }
 
 </script>
-
 
 {% endblock %}
