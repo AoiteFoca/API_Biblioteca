@@ -54,12 +54,14 @@ não protegeremos rotas neste ponto do trabalho.
 ## Instruções da Avaliação N3:
 ### Troca de Idioma:
 - Deverá ser utilizada a biblioteca `Babel` para configuração de idiomas;
-- Pelo menos três idiomas (Português, Inglês e Espanhol) devem estar aplicados ao site;
+- Pelo menos três idiomas (Português, Inglês e Espanhol) devem estar aplicados ao site.
 
 ### Paginação:
-- A página de clientes deverá limitar um número de exibições em tela (10, por exemplo) e, caso existam mais usuários, eles deverão ser exibidos na página 2 de clientes.
+- A página de clientes deverá limitar um número de exibições em tela (10, por exemplo) e, caso existam mais usuários, eles deverão ser exibidos na página 2 de clientes;
+- Deve ser criada uma rota para cadastros e exibição de produtos, onde a paginação deverá acontecer da mesma forma que em usuários.
 
 ### Permissão de usuários:
+- Deverá ter a opção de ser conta administradora no cadastro de usuário;
 - Deverá existir uma página de admin que apenas o usuário com role admin conseguirá acessar;
 - A verificação de permissão deverá ser feita através de atributos do banco, e não características do usuário (nome e idade, por exemplo).
 

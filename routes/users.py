@@ -268,29 +268,44 @@ def register():
     email = request.form['email']
     senha = request.form['senha']
     nome = request.form['nome']
+    is_admin = request.form.get('is_admin', '0')  # Valor padrão é '0' (não administrador)
+
+    # Validações básicas
     if not email or not senha or not nome:
-        flash(f'Todos os campos sao obrigatorios!', 'error')
+        flash(f'Todos os campos são obrigatórios!', 'error')
         return redirect(url_for('register'))
     if not validar_email(email):
-        flash(f'Email deve ser um e-mail valido!', 'error')
+        flash(f'Email deve ser um e-mail válido!', 'error')
         return redirect(url_for('register'))
+    if is_admin not in ['0', '1']:
+        flash(f'Valor inválido para o campo de administrador!', 'error')
+        return redirect(url_for('register'))
+
     try:
         db = get_db()
         cursor = db.cursor()
+
+        # Verificar se o e-mail já existe
         cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
         user = cursor.fetchone()
         if user:
-            flash(f'Email ja cadastrado!', 'error')
+            flash(f'E-mail já cadastrado!', 'error')
             return redirect(url_for('register'))
+
+        # Hash da senha e inserção do usuário
         hashed_senha = bcrypt.hashpw(senha.encode('utf-8'), bcrypt.gensalt())
-        cursor.execute('INSERT INTO users (email, senha, nome) VALUES (?, ?, ?)', (email, hashed_senha, nome))
+        cursor.execute(
+            'INSERT INTO users (email, senha, nome, is_admin) VALUES (?, ?, ?, ?)',
+            (email, hashed_senha, nome, int(is_admin))
+        )
         db.commit()
-        flash(f'Usuario {nome} cadastrado!', 'success')
+        flash(f'Usuário {nome} cadastrado com sucesso!', 'success')
         return redirect(url_for('home'))
     except sqlite3.Error as e:
         return jsonify({'error': str(e)}), 500
     finally:
         db.close()
+
 
 @users_bp.route('/users/<int:id>/edit', methods=['GET', 'POST'])
 def edit_user(id):
