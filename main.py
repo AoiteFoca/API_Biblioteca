@@ -4,6 +4,7 @@ from routes.users import users_bp, update_user
 from routes.products import products_bp 
 import logging
 import os
+from flask_babel import Babel
 from flask_dance.contrib.google import make_google_blueprint, google
 from flask_dance.contrib.github import make_github_blueprint, github
 from dotenv import load_dotenv
