@@ -32,6 +32,9 @@
           <li class="nav-item">
             <a class="nav-link" href="/users">Usuarios</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/products">Produtos</a>
+          </li>
         </ul>
         <!-- Alinha perfil e ícone à direita -->
         <ul class="navbar-nav ms-auto">
@@ -39,13 +42,23 @@
             <a class="nav-link" href="/perfil">Perfil <i class="fas fa-user"></i></a>
           </li>
           </li>
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+          aria-expanded="false">Idioma</a>
+        <div class="dropdown-menu dropdown-menu-end">
+          <a class="dropdown-item">Portugues</a>
+          <a class="dropdown-item">Espanhol</a>
+          <a class="dropdown-item">Ingles</a>
+        </div>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true"
               aria-expanded="false">Opções</a>
             <div class="dropdown-menu dropdown-menu-end">
-              <a class="dropdown-item" href="{{ 'https://www.youtube.com/watch?v=-BASeleF5A0'|safe }}">Música de biblioteca Grátis</a>
+              <a class="dropdown-item" href="{{ 'https://www.youtube.com/watch?v=-BASeleF5A0'|safe }}">Música de
+                biblioteca Grátis</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="/">Sair</a>
+              <a class="nav-link" href="/initdb">Iniciar Banco</a>
+              <a class="nav-link" href="/admin">Pagina de Administrador</a>
+              <a class="nav-link" href="/logout">Sair</a>
             </div>
           </li>
         </ul>

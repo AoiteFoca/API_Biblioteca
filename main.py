@@ -1,8 +1,10 @@
 from flask import render_template, Flask, request, redirect, url_for, session, flash
 from routes.db import init_db, close_db, get_db
 from routes.users import users_bp, update_user
+from routes.products import products_bp 
 import logging
 import os
+from flask_babel import Babel
 from flask_dance.contrib.google import make_google_blueprint, google
 from flask_dance.contrib.github import make_github_blueprint, github
 from dotenv import load_dotenv
@@ -58,6 +60,7 @@ github_blueprint = make_github_blueprint(
 app.register_blueprint(github_blueprint, url_prefix="/login")
 
 app.register_blueprint(users_bp)
+app.register_blueprint(products_bp)
 
 #-------------------------Banco-------------------------#
 
@@ -93,6 +96,34 @@ def login():
         return redirect(url_for('github.login'))
     else:
         return render_template('login.html')
+
+#-------------------------Admin--------------------------#
+
+@app.route('/admin')
+def admin():
+    if not is_admin():
+        return """
+        <h1>Você não possui permissão de administrador.</h1>
+        <p>Feche a página agora mesmo ou sofra as consequências...</p>
+        <a href="/" style="text-decoration: none;">
+            <button style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                Voltar para a página inicial
+            </button>
+        </a>
+        """, 403
+    return render_template('admin.html')
+
+def is_admin():
+    user = session.get('user')
+    return user and user.get("is_admin", 0)
+
+#-------------------------Logout--------------------------#
+
+@app.route('/logout')
+def logout():
+    session.pop('user', None)  # Remove o usuário da sessão
+    flash('Você foi deslogado com sucesso!', 'success')
+    return redirect(url_for('login'))  # Redireciona para a página de login
 
 #-------------------------Perfil--------------------------#
 

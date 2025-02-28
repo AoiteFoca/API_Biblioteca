@@ -1,7 +1,7 @@
 from datetime import datetime
 import sqlite3
 import bcrypt
-from flask import Blueprint, jsonify, render_template, request, url_for, redirect, flash
+from flask import Blueprint, jsonify, render_template, request, url_for, redirect, flash, session
 import re
 from routes.db import get_db
 
@@ -26,6 +26,7 @@ def add_users():
     users_email = request.json.get('email')
     users_senha = request.json.get('senha')
     users_nome = request.json.get('nome')
+    users_is_admin = request.json.get('is_admin')
     
     if not users_email or not users_senha or not users_nome:
         return jsonify({"error": "As informacoes necessarias nao foram informadas"}), 400
@@ -40,7 +41,7 @@ def add_users():
         if existing_user:
             return jsonify({"error": "Email ja cadastrado"}), 409
         hashed_senha = bcrypt.hashpw(users_senha.encode('utf-8'), bcrypt.gensalt())
-        cursor.execute("INSERT INTO users (email, senha, nome) VALUES (?, ?, ?)", (users_email, hashed_senha, users_nome))
+        cursor.execute("INSERT INTO users (email, senha, nome, is_admin) VALUES (?, ?, ?, ?)", (users_email, hashed_senha, users_nome, users_is_admin))
         db.commit()
         
         return jsonify({"message": "Usuario adicionado com sucesso"}), 201
@@ -48,17 +49,34 @@ def add_users():
         return jsonify({"error": "Erro ao adicionar usuario", "details": str(e)}), 500
 
 def get_users():
+    page = request.args.get('page', 1, type=int)
+    per_page = 3  # Número de registros por página
+    offset = (page - 1) * per_page
     try:
         db = get_db()
         cursor = db.cursor()
-        cursor.execute("SELECT * FROM users")
+
+        # Contar o total de registros
+        cursor.execute("SELECT COUNT(*) AS total FROM users")
+        total_records = cursor.fetchone()['total']
+        # Buscar registros da página atual
+        cursor.execute("SELECT * FROM users LIMIT ? OFFSET ?", (per_page, offset))
         users = cursor.fetchall()
-        return render_template('users.html', dados=users)
+        # Calcular o número total de páginas
+        total_pages = (total_records + per_page - 1) // per_page
+        # Passar os dados para o template
+        return render_template(
+            "users.html", 
+            dados=users,  # Corrigido para "dados"
+            page=page, 
+            total_pages=total_pages
+        )
     except Exception as e:
         return jsonify({"error": "Erro ao buscar usuario", "details": str(e)}), 500
+    finally:
+        db.close()
 
 @users_bp.route('/users/<int:user_id>', methods=['GET', 'PUT', 'PATCH', 'DELETE'])
-
 def handle_usuario (user_id):
     if request.method == 'GET':
         return get_user(user_id)
@@ -157,6 +175,48 @@ def delete_user(user_id):
     finally:
         db.close()
 
+#------------Administrador------------#
+
+@users_bp.route('/users/<int:user_id>/admin', methods=['PATCH', 'DELETE'])
+def toggle_admin(user_id):
+    """
+    Promove um usuário a administrador ou remove o status de administrador.
+    PATCH: Torna o usuário um administrador.
+    DELETE: Remove o status de administrador do usuário.
+    """
+    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    try:
+        db = get_db()
+        cursor = db.cursor()
+
+        # Buscar o usuário pelo ID
+        cursor.execute('SELECT * FROM users WHERE id = ?', (user_id,))
+        user = cursor.fetchone()
+
+        if not user:
+            return jsonify({'error': 'ID do usuário não encontrado'}), 404
+
+        # Verificar o método da requisição
+        if request.method == 'PATCH':  # Promover a administrador
+            if user['is_admin'] == 1:
+                return jsonify({'error': f'O usuário {user["nome"]} já é administrador.'}), 400
+            cursor.execute('UPDATE users SET is_admin = 1, modified = ? WHERE id = ?', (now, user_id))
+            db.commit()
+            return jsonify({'message': f'O usuário {user["nome"]} agora é administrador.'}), 200
+
+        elif request.method == 'DELETE':  # Remover status de administrador
+            if user['is_admin'] == 0:
+                return jsonify({'error': f'O usuário {user["nome"]} já é um usuário padrão.'}), 400
+            cursor.execute('UPDATE users SET is_admin = 0, modified = ? WHERE id = ?', (now, user_id))
+            db.commit()
+            return jsonify({'message': f'O status de administrador foi removido do usuário {user["nome"]}.'}), 200
+
+    except sqlite3.Error as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        db.close()
+
 #--------------LogarUser--------------#
 
 @users_bp.route('/logins', methods=['POST'])
@@ -173,17 +233,24 @@ def login():
         cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
         user = cursor.fetchone()
         if user is not None:
-            if user[4] == 0:
-                flash(f'Usuario bloqueado!', 'error')
+            if user[4] == 0:  # status do usuário
+                flash(f'Usuário bloqueado!', 'error')
                 return redirect(url_for('login'))
-            if bcrypt.checkpw(senha.encode('utf-8'), user[2]):
-                flash(f'Usuario logado!', 'success')
+            if bcrypt.checkpw(senha.encode('utf-8'), user[2]):  # senha correta
+                flash(f'Usuário logado!', 'success')
+                # Armazenando informações do usuário na sessão
+                session['user'] = {
+                    'id': user[0],  # ID do usuário
+                    'email': user[1],  # Email do usuário
+                    'is_admin': user[4],  # Verifica se é admin
+                    'nome': user[5]  # Nome do usuário (ajuste conforme sua tabela)
+                }
                 return redirect(url_for('home'))
             else:
                 flash(f'Senha incorreta!', 'error')
                 return redirect(url_for('login'))
         else:
-            flash(f'Usuario nao encontrado!', 'error')
+            flash(f'Usuário não encontrado!', 'error')
             return redirect(url_for('login'))
     except sqlite3.Error as e:
         return jsonify({'error': str(e)}), 500
@@ -201,29 +268,44 @@ def register():
     email = request.form['email']
     senha = request.form['senha']
     nome = request.form['nome']
+    is_admin = request.form.get('is_admin', '0')  # Valor padrão é '0' (não administrador)
+
+    # Validações básicas
     if not email or not senha or not nome:
-        flash(f'Todos os campos sao obrigatorios!', 'error')
+        flash(f'Todos os campos são obrigatórios!', 'error')
         return redirect(url_for('register'))
     if not validar_email(email):
-        flash(f'Email deve ser um e-mail valido!', 'error')
+        flash(f'Email deve ser um e-mail válido!', 'error')
         return redirect(url_for('register'))
+    if is_admin not in ['0', '1']:
+        flash(f'Valor inválido para o campo de administrador!', 'error')
+        return redirect(url_for('register'))
+
     try:
         db = get_db()
         cursor = db.cursor()
+
+        # Verificar se o e-mail já existe
         cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
         user = cursor.fetchone()
         if user:
-            flash(f'Email ja cadastrado!', 'error')
+            flash(f'E-mail já cadastrado!', 'error')
             return redirect(url_for('register'))
+
+        # Hash da senha e inserção do usuário
         hashed_senha = bcrypt.hashpw(senha.encode('utf-8'), bcrypt.gensalt())
-        cursor.execute('INSERT INTO users (email, senha, nome) VALUES (?, ?, ?)', (email, hashed_senha, nome))
+        cursor.execute(
+            'INSERT INTO users (email, senha, nome, is_admin) VALUES (?, ?, ?, ?)',
+            (email, hashed_senha, nome, int(is_admin))
+        )
         db.commit()
-        flash(f'Usuario {nome} cadastrado!', 'success')
+        flash(f'Usuário {nome} cadastrado com sucesso!', 'success')
         return redirect(url_for('home'))
     except sqlite3.Error as e:
         return jsonify({'error': str(e)}), 500
     finally:
         db.close()
+
 
 @users_bp.route('/users/<int:id>/edit', methods=['GET', 'POST'])
 def edit_user(id):
@@ -261,5 +343,3 @@ def edit_user(id):
             flash('Usuário não encontrado!', 'error')
             return redirect(url_for('users'))
         return render_template('edit.html', dados=user)
-
-#---------------Password---------------#

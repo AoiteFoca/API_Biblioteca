@@ -1,0 +1,44 @@
+{% extends 'navbar.html' %}
+
+{% block content %}
+<div style="
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-image: url('/static/assets/BibliotecaFundo.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -1;
+">
+</div>
+
+<form action="/products" method="POST">
+    <fieldset>
+        <div class="d-flex align-items-center justify-content-center">
+            <div class="card border-primary mb-3" style="max-width: 30rem; width: 25rem;">
+                <div class="card-header"> <h2>Cadastrar Produto</h2></div>
+                <div class="card-body">
+                    <div>
+                        <h4 class="form-label mt-4">Nome do Produto</h4>
+                        <input name="nome" type="text" class="form-control" placeholder="Digite o nome do produto">
+                        <h4 class="form-label mt-4">Descrição</h4>
+                        <textarea name="descricao" class="form-control" placeholder="Descrição do produto"></textarea>
+                        <h4 class="form-label mt-4">Preço</h4>
+                        <input name="preco" type="number" step="0.01" class="form-control" placeholder="Digite o preço">
+                        <h4 class="form-label mt-4">Quantidade</h4>
+                        <input name="quantidade" type="number" class="form-control" placeholder="Digite a quantidade">
+                    </div>
+
+                    <div class="d-grid gap-2 form-label mt-4">
+                        <button class="btn btn-primary" type="submit">Cadastrar Produto</button>
+                        <button onclick="window.location.href='/products';" class="btn btn-outline-secondary" type="button">Ver Produtos</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</form>
+{% endblock %}
